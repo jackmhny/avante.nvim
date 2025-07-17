@@ -7,9 +7,7 @@ local M = {}
 M.api_key_name = "OPENROUTER_API_KEY"
 
 ---@return string|nil
-function M.parse_api_key()
-  return vim.env[M.api_key_name]
-end
+function M.parse_api_key() return vim.env[M.api_key_name] end
 
 M.role_map = {
   user = "user",
