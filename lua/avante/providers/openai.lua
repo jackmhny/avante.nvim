@@ -68,6 +68,82 @@ end
 
 function M.is_reasoning_model(model) return model and string.match(model, "^o%d+") ~= nil end
 
+---@param provider_conf AvanteDefaultBaseProvider
+---@param request_body table<string, any>
+function M.build_provider_routing(provider_conf, request_body)
+  local provider_routing = {}
+  
+  -- Handle provider order
+  if provider_conf.provider_order and #provider_conf.provider_order > 0 then
+    provider_routing.order = provider_conf.provider_order
+  end
+  
+  -- Handle fallbacks
+  if provider_conf.allow_fallbacks ~= nil then
+    provider_routing.allow_fallbacks = provider_conf.allow_fallbacks
+  end
+  
+  -- Handle parameter requirements
+  if provider_conf.require_parameters ~= nil then
+    provider_routing.require_parameters = provider_conf.require_parameters
+  end
+  
+  -- Handle data collection policy
+  if provider_conf.data_collection then
+    provider_routing.data_collection = provider_conf.data_collection
+  end
+  
+  -- Handle only specific providers
+  if provider_conf.only_providers and #provider_conf.only_providers > 0 then
+    provider_routing.only = provider_conf.only_providers
+  end
+  
+  -- Handle ignored providers
+  if provider_conf.ignore_providers and #provider_conf.ignore_providers > 0 then
+    provider_routing.ignore = provider_conf.ignore_providers
+  end
+  
+  -- Handle quantizations
+  if provider_conf.quantizations and #provider_conf.quantizations > 0 then
+    provider_routing.quantizations = provider_conf.quantizations
+  end
+  
+  -- Handle sorting
+  if provider_conf.sort then
+    provider_routing.sort = provider_conf.sort
+  end
+  
+  -- Handle max price
+  if provider_conf.max_price then
+    provider_routing.max_price = provider_conf.max_price
+  end
+  
+  -- Only add provider routing if we have any routing preferences
+  if next(provider_routing) ~= nil then
+    request_body.provider = provider_routing
+  end
+end
+
+---@param model string
+---@return string, table<string, any>
+function M.parse_model_shortcuts(model)
+  local routing_config = {}
+  
+  -- Handle :nitro shortcut (sort by throughput)
+  if model:match(":nitro$") then
+    model = model:gsub(":nitro$", "")
+    routing_config.sort = "throughput"
+  end
+  
+  -- Handle :floor shortcut (sort by price)
+  if model:match(":floor$") then
+    model = model:gsub(":floor$", "")
+    routing_config.sort = "price"
+  end
+  
+  return model, routing_config
+end
+
 function M.set_allowed_params(provider_conf, request_body)
   if M.is_reasoning_model(provider_conf.model) then
     request_body.temperature = 1
@@ -537,6 +613,20 @@ function M:parse_curl_args(prompt_opts)
     headers["HTTP-Referer"] = "https://github.com/yetone/avante.nvim"
     headers["X-Title"] = "Avante.nvim"
     request_body.include_reasoning = true
+    
+    -- Parse model shortcuts and apply routing config for OpenRouter
+    local model, shortcut_routing = M.parse_model_shortcuts(provider_conf.model)
+    provider_conf.model = model
+    
+    -- Merge shortcut routing with provider config
+    for key, value in pairs(shortcut_routing) do
+      if provider_conf[key] == nil then
+        provider_conf[key] = value
+      end
+    end
+    
+    -- Build provider routing configuration for OpenRouter
+    M.build_provider_routing(provider_conf, request_body)
   end
 
   self.set_allowed_params(provider_conf, request_body)

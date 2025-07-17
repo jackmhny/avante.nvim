@@ -23,7 +23,7 @@ M._defaults = {
   ---@alias avante.Mode "agentic" | "legacy"
   ---@type avante.Mode
   mode = "agentic",
-  ---@alias avante.ProviderName "claude" | "openai" | "azure" | "gemini" | "vertex" | "cohere" | "copilot" | "bedrock" | "ollama" | string
+  ---@alias avante.ProviderName "claude" | "openai" | "azure" | "gemini" | "vertex" | "cohere" | "copilot" | "bedrock" | "ollama" | "openrouter" | string
   ---@type avante.ProviderName
   provider = "claude",
   -- WARNING: Since auto-suggestions are a high-frequency operation and therefore expensive,
@@ -406,6 +406,27 @@ M._defaults = {
       endpoint = "https://api.moonshot.ai/v1",
       model = "kimi-k2-0711-preview",
       api_key_name = "MOONSHOT_API_KEY",
+    },
+    ---@type AvanteSupportedProvider
+    openrouter = {
+      endpoint = "https://openrouter.ai/api/v1",
+      model = "deepseek/deepseek-r1",
+      timeout = 30000, -- Timeout in milliseconds
+      context_window = 128000, -- Number of tokens to send to the model for context
+      extra_request_body = {
+        temperature = 0.75,
+        max_completion_tokens = 16384,
+      },
+      -- OpenRouter provider routing configuration
+      -- provider_order = {"anthropic", "openai"}, -- List of provider slugs to try in order
+      -- allow_fallbacks = true, -- Whether to allow backup providers when the primary is unavailable
+      -- require_parameters = false, -- Only use providers that support all parameters in your request
+      -- data_collection = "allow", -- Control whether to use providers that may store data ("allow" | "deny")
+      -- only_providers = {}, -- List of provider slugs to allow for this request
+      -- ignore_providers = {}, -- List of provider slugs to skip for this request
+      -- quantizations = {}, -- List of quantization levels to filter by (e.g. {"int4", "int8"})
+      -- sort = nil, -- Sort providers by price or throughput ("price" | "throughput" | "latency")
+      -- max_price = nil, -- Maximum pricing you want to pay for this request
     },
   },
   ---Specify the special dual_boost mode
