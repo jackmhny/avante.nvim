@@ -46,8 +46,12 @@ function M:transform_tool(tool)
   return res
 end
 
+---@param url string
+---@return boolean
 function M.is_openrouter(url) return url:match("^https://openrouter%.ai/") end
 
+---@param url string
+---@return boolean
 function M.is_mistral(url) return url:match("^https://api%.mistral%.ai/") end
 
 ---@param opts AvantePromptOptions
@@ -66,11 +70,15 @@ function M.get_user_message(opts)
   )
 end
 
+---@param model string
+---@return boolean
 function M.is_reasoning_model(model) return model and string.match(model, "^o%d+") ~= nil end
 
 ---@param provider_conf AvanteDefaultBaseProvider
 ---@param request_body table<string, any>
+---@return nil
 function M.build_provider_routing(provider_conf, request_body)
+  ---@type table<string, any>
   local provider_routing = {}
 
   -- Handle provider order
@@ -134,6 +142,9 @@ function M.parse_model_shortcuts(model)
   return model, routing_config
 end
 
+---@param provider_conf AvanteDefaultBaseProvider
+---@param request_body table<string, any>
+---@return nil
 function M.set_allowed_params(provider_conf, request_body)
   if M.is_reasoning_model(provider_conf.model) then
     request_body.temperature = 1
