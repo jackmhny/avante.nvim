@@ -24,13 +24,13 @@ describe("OpenRouter Provider", function()
   describe("build_provider_routing", function()
     it("should build provider routing object with all options", function()
       local provider_conf = {
-        provider_order = {"anthropic", "openai"},
+        provider_order = { "anthropic", "openai" },
         allow_fallbacks = false,
         require_parameters = true,
         data_collection = "deny",
-        only_providers = {"anthropic"},
-        ignore_providers = {"bad_provider"},
-        quantizations = {"int4", "int8"},
+        only_providers = { "anthropic" },
+        ignore_providers = { "bad_provider" },
+        quantizations = { "int4", "int8" },
         sort = "price",
         max_price = {
           prompt_tokens = 0.001,
@@ -42,13 +42,13 @@ describe("OpenRouter Provider", function()
       openrouter.build_provider_routing(provider_conf, request_body)
 
       assert.are.same({
-        order = {"anthropic", "openai"},
+        order = { "anthropic", "openai" },
         allow_fallbacks = false,
         require_parameters = true,
         data_collection = "deny",
-        only = {"anthropic"},
-        ignore = {"bad_provider"},
-        quantizations = {"int4", "int8"},
+        only = { "anthropic" },
+        ignore = { "bad_provider" },
+        quantizations = { "int4", "int8" },
         sort = "price",
         max_price = {
           prompt_tokens = 0.001,
@@ -68,7 +68,7 @@ describe("OpenRouter Provider", function()
 
     it("should only add configured options", function()
       local provider_conf = {
-        provider_order = {"anthropic"},
+        provider_order = { "anthropic" },
         sort = "throughput",
       }
       local request_body = {}
@@ -76,7 +76,7 @@ describe("OpenRouter Provider", function()
       openrouter.build_provider_routing(provider_conf, request_body)
 
       assert.are.same({
-        order = {"anthropic"},
+        order = { "anthropic" },
         sort = "throughput",
       }, request_body.provider)
     end)

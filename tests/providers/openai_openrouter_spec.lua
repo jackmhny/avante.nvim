@@ -24,7 +24,7 @@ describe("OpenAI Provider with OpenRouter", function()
   describe("build_provider_routing", function()
     it("should build provider routing object", function()
       local provider_conf = {
-        provider_order = {"anthropic", "openai"},
+        provider_order = { "anthropic", "openai" },
         allow_fallbacks = false,
         sort = "price",
       }
@@ -33,7 +33,7 @@ describe("OpenAI Provider with OpenRouter", function()
       openai.build_provider_routing(provider_conf, request_body)
 
       assert.are.same({
-        order = {"anthropic", "openai"},
+        order = { "anthropic", "openai" },
         allow_fallbacks = false,
         sort = "price",
       }, request_body.provider)
