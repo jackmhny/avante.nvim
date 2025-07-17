@@ -54,7 +54,9 @@ end
 
 ---@param provider_conf AvanteDefaultBaseProvider
 ---@param request_body table<string, any>
+---@return nil
 function M.build_provider_routing(provider_conf, request_body)
+  ---@type table<string, any>
   local provider_routing = {}
 
   -- Handle provider order
@@ -101,6 +103,7 @@ end
 ---@param model string
 ---@return string, table<string, any>
 function M.parse_model_shortcuts(model)
+  ---@type table<string, any>
   local routing_config = {}
 
   -- Handle :nitro shortcut (sort by throughput)
@@ -118,10 +121,14 @@ function M.parse_model_shortcuts(model)
   return model, routing_config
 end
 
+---@param prompt_opts AvantePromptOptions
+---@return table<string, any>
 function M:parse_curl_args(prompt_opts)
+  ---@type AvanteDefaultBaseProvider, table<string, any>
   local provider_conf, request_body = Providers.parse_config(self)
   local disable_tools = provider_conf.disable_tools or false
 
+  ---@type table<string, string>
   local headers = {
     ["Content-Type"] = "application/json",
     ["HTTP-Referer"] = "https://github.com/yetone/avante.nvim",
@@ -153,6 +160,7 @@ function M:parse_curl_args(prompt_opts)
 
   local use_ReAct_prompt = provider_conf.use_ReAct_prompt == true
 
+  ---@type table<integer, AvanteOpenAITool>|nil
   local tools = nil
   if not disable_tools and prompt_opts.tools and not use_ReAct_prompt then
     tools = {}
