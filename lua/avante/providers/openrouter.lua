@@ -146,7 +146,7 @@ function M:parse_curl_args(prompt_opts)
   }
 
   if Providers.env.require_api_key(provider_conf) then
-    local api_key = self.parse_api_key()
+    local api_key = M.parse_api_key()
     if api_key == nil then
       error("OpenRouter API key is not set, please set it in your environment variable or config file")
     end
