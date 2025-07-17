@@ -53,9 +53,9 @@ end
 
 ---@param ctx AvanteContext
 ---@param data_stream string
----@param event_state table
----@param opts table|nil
----@return table|nil
+---@param event_state table<string, any>
+---@param opts table<string, any>|nil
+---@return table<string, any>|nil
 function M:parse_response(ctx, data_stream, event_state, opts)
   -- Inherit response parsing from OpenAI provider
   local openai = require("avante.providers.openai")
