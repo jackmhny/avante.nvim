@@ -6,11 +6,17 @@ local M = {}
 
 M.api_key_name = "OPENROUTER_API_KEY"
 
+---@return string|nil
+function M.parse_api_key()
+  return vim.env[M.api_key_name]
+end
+
 M.role_map = {
   user = "user",
   assistant = "assistant",
 }
 
+---@return boolean
 function M:is_disable_stream() return false end
 
 ---@param tool AvanteLLMTool
@@ -40,12 +46,18 @@ function M:transform_tool(tool)
 end
 
 ---@param opts AvantePromptOptions
+---@return table[]
 function M:parse_messages(opts)
   -- Inherit message parsing from OpenAI provider
   local openai = require("avante.providers.openai")
   return openai.parse_messages(self, opts)
 end
 
+---@param ctx AvanteContext
+---@param data_stream string
+---@param event_state table
+---@param opts table|nil
+---@return table|nil
 function M:parse_response(ctx, data_stream, event_state, opts)
   -- Inherit response parsing from OpenAI provider
   local openai = require("avante.providers.openai")
